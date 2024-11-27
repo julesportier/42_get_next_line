@@ -16,7 +16,12 @@
 # include <unistd.h>
 # include <stdlib.h>
 
-char	*cat_line(ssize_t line_len, char *buffer);
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1
+# endif
+
+ssize_t	fill_buffers(char *buffer, char *stock_buffer);
+char	*cat_line(char *buffer);
 char	*get_next_line(int fd);
 
 #endif
