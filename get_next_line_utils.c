@@ -44,7 +44,7 @@ char	*ft_cat(char *line, char *buffer, ssize_t len)
 		i++;
 	}
 	free(line);
-	while (i < line_len + len)
+	while (i < line_len + len && i < line_len + BUFFER_SIZE)
 	{
 		cat[i] = buffer[i - line_len];
 		i++;
@@ -66,11 +66,11 @@ ssize_t	get_line_len(char *buffer, ssize_t max_len)
 	ssize_t	i;
 
 	i = 0;
-	while (i < max_len)
+	while (i <= max_len)
 	{
 		i++;
- 		if (buffer[i] == '\n')
-			return (i);
+ 		if (buffer[i - 1] == '\n')
+			return (i - 1);
 	}
 	return (i);
 }

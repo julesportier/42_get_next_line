@@ -48,23 +48,29 @@
 char	*get_next_line(int fd)
 {
 	static char		buffer[BUFFER_SIZE];
-	static ssize_t	nl_pos = BUFFER_SIZE;
+	static ssize_t	nl_pos = BUFFER_SIZE + 1;
 	static ssize_t	read_len;
 	char			*line;
 
 	if (fd < 0)
 		return (NULL);
 	line = NULL;
-	if (nl_pos < BUFFER_SIZE)
+	if (nl_pos < BUFFER_SIZE + 1)
 	{
 		line = ft_cat(
 			line,
-			buffer + nl_pos,
-			get_line_len(buffer + nl_pos, BUFFER_SIZE - nl_pos)
+			buffer + nl_pos + 1,
+			get_line_len(buffer + nl_pos + 1, BUFFER_SIZE - (nl_pos + 2))
 		);
-		nl_pos += get_line_len(buffer + nl_pos, BUFFER_SIZE - nl_pos);
+		printf("line == %s\n", line);
+		nl_pos += get_line_len(buffer + nl_pos + 1, BUFFER_SIZE - (nl_pos + 1));
+		printf("nl_pos == %zu\n", nl_pos);
+		if (nl_pos < BUFFER_SIZE)
+			return (line);
+		nl_pos++;
+		printf("nl_pos == %zu\n", nl_pos);
 	}
-	while (nl_pos == BUFFER_SIZE)
+	while (nl_pos == BUFFER_SIZE + 1)
 	{
 		read_len = read(fd, buffer, BUFFER_SIZE);
 		if (read_len == -1)
@@ -73,7 +79,13 @@ char	*get_next_line(int fd)
 			return (NULL);
 		}
 		nl_pos = get_line_len(buffer, read_len);
-		line = ft_cat(line, buffer, nl_pos);
+		line = ft_cat(line, buffer, nl_pos + 1);
+		if (nl_pos < BUFFER_SIZE + 1)
+		{
+			printf("main nl_pos == %zu\n", nl_pos);
+			printf("buffer[nl_pos] == %c\n", buffer[nl_pos]);
+			return (line);
+		}
 	}
 	return (line);
 }
@@ -89,7 +101,7 @@ int	main(void)
 	//read(fd, str, 10);
 	//write(1, str, 10);
 	while (i++ < 5)
-		printf("%s", get_next_line(fd));
+		printf("GNL --> %s", get_next_line(fd));
 	return (0);
 }
 //char	*get_next_line(int fd)
@@ -116,11 +128,22 @@ int	main(void)
 //			return (buffer);
 //		}
 //		else if (char_read == -1)
+//	while (nl_pos == BUFFER_SIZE + 1)
+//	{
+//		read_len = read(fd, buffer, BUFFER_SIZE);
+//		if (read_len == -1)
 //		{
-//			free(buffer);
+//			free(line);
 //			return (NULL);
 //		}
-//		line_len += char_read;
+//		nl_pos = get_line_len(buffer, read_len);
+//		line = ft_cat(line, buffer, nl_pos + 1);
+//		if (nl_pos < BUFFER_SIZE + 1)
+//		{
+//			printf("main nl_pos == %zu\n", nl_pos);
+//			printf("buffer[nl_pos] == %c\n", buffer[nl_pos]);
+//			return (line);
+//		}
 //	}
-//	return (buffer);
+//	return (line);
 //}
